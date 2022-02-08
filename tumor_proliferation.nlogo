@@ -12,9 +12,7 @@ immunes-own [
   immune-apoptosis
   ]
 tumors-own [
-  tumors-apop
   tumors-prol
-  generations
 ]
 
 patches-own [energy-amount]
@@ -78,7 +76,7 @@ to proliferate-tumors
    )
 end
 
-;; assumotion made with the proliferation rate is to make the simulation go fast or else it will be crowded
+;; assumption made with the proliferation rate is to make the simulation go fast or else it will be crowded
 to prol-tumor-low
   ifelse age > 12 [die] ; if more than age 12 die
   [if count tumors-here < m-neighbors ; watch where you proliferate
@@ -102,7 +100,6 @@ to prol-tumor-high
         fd 1]]]
   ]
 end
-
 
 
 
