@@ -2,8 +2,7 @@ breed [tumors tumor]
 breed [immunes immune]
 
 globals [
-  m-neighbors
-   ; time since proliferation has passed
+  m-neighbors ; commenting n-neighbors to control for the spread of tumor
   time
 ]
 
@@ -20,7 +19,7 @@ patches-own [energy-amount]
 
 to setup ; setting up the environment
   clear-all
-  set m-neighbors 3 ; this is immediate surrounding neighbor
+  set m-neighbors 5 ; this is immediate surrounding neighbor
 
   ;set gens 0
   setup-env
@@ -32,6 +31,7 @@ end
 
 to go
   proliferate-tumors
+  apoptose-tumors
   set time ticks
   ;set gens gens + 1
   ;setup-immunes
@@ -84,12 +84,11 @@ end
 ;; assumption made with the proliferation rate is to make the simulation go fast or else it will be crowded
 to prol-tumor-low
   ifelse age > 12 [die] ; if more than age 12 die
-  [
-    set age 0
+  [set age 0
     if count tumors-here < m-neighbors ; watch where you proliferate
     [
       if random 100 = 0 [
-        hatch 1[rt random-float 360 ; in a low in envt im assuming 1/100 chance of proliferation
+        hatch 1[rt random-float 360 ;
         fd 1]]]
     set age age + 1
   ]
@@ -99,23 +98,25 @@ end
 to prol-tumor-med
    ifelse age > 12 [die]
   [set age 0
-    if count tumors-here < m-neighbors
-    [if random 50 = 0 [ hatch 2[rt random-float 360 ; assumption here is 1/50
+    if count tumors-here < m-neighbors[
+    if random 100 = 0 [ hatch 2[rt random-float 360 ; same probability but hatch twice
         fd 1]]]
-    set age age + 1
+     set age age + 1
   ]
-
 end
 
 to prol-tumor-high
   ifelse age > 12 [die]
   [set age 0
-    if count tumors-here < m-neighbors
-    [if random 10 = 0 [ hatch 3[rt random-float 360 ; assumption here is 1/10
+    if count tumors-here < m-neighbors[
+    if random 100 = 0 [ hatch 4[rt random-float 360 ; same probability but hatch 4 times
         fd 1]]]
-     set age age + 1
+    set age age + 1
   ]
+end
 
+to apoptose-tumors ; bringing back apoptose to control for tumor desnity
+  ask one-of tumors [if sum [count tumors-here] of neighbors > 10 [die]]
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
@@ -187,7 +188,7 @@ CHOOSER
 set-environment
 set-environment
 "low" "medium" "high" "dynamic"
-2
+0
 
 @#$#@#$#@
 ## WHAT IS IT?
