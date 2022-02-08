@@ -5,6 +5,7 @@ globals [
   tumor-counts
   m-neighbors
   age ; time since proliferation has passed
+  time
 ]
 
 immunes-own [
@@ -19,7 +20,7 @@ patches-own [energy-amount]
 
 to setup ; setting up the environment
   clear-all
-  set m-neighbors 8 ; this is immediate surrounding neighbor
+  set m-neighbors 2 ; this is immediate surrounding neighbor
   set age 0 ; set the age (this is tumor specific so might move to tumors own)
   setup-env
   ;setup-patches ; setup the environment
@@ -30,6 +31,7 @@ end
 
 to go
   proliferate-tumors
+  set time ticks
   ;setup-immunes
   tick
 end
@@ -79,32 +81,33 @@ end
 ;; assumption made with the proliferation rate is to make the simulation go fast or else it will be crowded
 to prol-tumor-low
   ifelse age > 12 [die] ; if more than age 12 die
-  [if count tumors-here < m-neighbors ; watch where you proliferate
-    [if random 20 = 0 [ hatch 1[rt random-float 360 ; in a low in envt im assuming 1/20 chance of proliferation
+  [set age 0
+    if count tumors-here < m-neighbors ; watch where you proliferate
+    [if random 1000 = 0 [ hatch 1[rt random-float 360 ; in a low in envt im assuming 1/20 chance of proliferation
         fd 1]]]
   ]
+  set age age + 1
 end
 
 to prol-tumor-med
    ifelse age > 12 [die]
-  [if count tumors-here < m-neighbors
-    [if random 10 = 0 [ hatch 2[rt random-float 360 ; assumption here is 1/10
+  [set age 0
+    if count tumors-here < m-neighbors
+    [if random 100 = 0 [ hatch 2[rt random-float 360 ; assumption here is 1/10
         fd 1]]]
   ]
+  set age age + 1
 end
 
 to prol-tumor-high
   ifelse age > 12 [die]
-  [if count tumors-here < m-neighbors
-    [if random 5 = 0 [ hatch 3[rt random-float 360 ; assumption here is 1/5
+  [set age 0
+    if count tumors-here < m-neighbors
+    [if random 10 = 0 [ hatch 3[rt random-float 360 ; assumption here is 1/5
         fd 1]]]
   ]
+  set age age + 1
 end
-
-
-
-
-
 @#$#@#$#@
 GRAPHICS-WINDOW
 210
