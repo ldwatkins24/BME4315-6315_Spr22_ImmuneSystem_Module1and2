@@ -2,9 +2,8 @@ breed [tumors tumor]
 breed [immunes immune]
 
 globals [
-  tumor-counts
   m-neighbors
-  age ; time since proliferation has passed
+   ; time since proliferation has passed
   time
 ]
 
@@ -14,14 +13,16 @@ immunes-own [
   ]
 tumors-own [
   tumors-prol
+  age
 ]
 
 patches-own [energy-amount]
 
 to setup ; setting up the environment
   clear-all
-  set m-neighbors 2 ; this is immediate surrounding neighbor
-  set age 0 ; set the age (this is tumor specific so might move to tumors own)
+  set m-neighbors 3 ; this is immediate surrounding neighbor
+
+  ;set gens 0
   setup-env
   ;setup-patches ; setup the environment
   setup-tumors ; tumor cells
@@ -32,6 +33,7 @@ end
 to go
   proliferate-tumors
   set time ticks
+  ;set gens gens + 1
   ;setup-immunes
   tick
 end
@@ -60,6 +62,7 @@ to setup-tumors
     set color blue ; make them blue and circular
     set shape "circle"
     set size 0.7
+    set age 0
     ;set gens 0 ; generation set at 0
   ]
 end
@@ -81,32 +84,38 @@ end
 ;; assumption made with the proliferation rate is to make the simulation go fast or else it will be crowded
 to prol-tumor-low
   ifelse age > 12 [die] ; if more than age 12 die
-  [set age 0
+  [
+    set age 0
     if count tumors-here < m-neighbors ; watch where you proliferate
-    [if random 1000 = 0 [ hatch 1[rt random-float 360 ; in a low in envt im assuming 1/20 chance of proliferation
+    [
+      if random 100 = 0 [
+        hatch 1[rt random-float 360 ; in a low in envt im assuming 1/100 chance of proliferation
         fd 1]]]
+    set age age + 1
   ]
-  set age age + 1
+
 end
 
 to prol-tumor-med
    ifelse age > 12 [die]
   [set age 0
     if count tumors-here < m-neighbors
-    [if random 100 = 0 [ hatch 2[rt random-float 360 ; assumption here is 1/10
+    [if random 50 = 0 [ hatch 2[rt random-float 360 ; assumption here is 1/50
         fd 1]]]
+    set age age + 1
   ]
-  set age age + 1
+
 end
 
 to prol-tumor-high
   ifelse age > 12 [die]
   [set age 0
     if count tumors-here < m-neighbors
-    [if random 10 = 0 [ hatch 3[rt random-float 360 ; assumption here is 1/5
+    [if random 10 = 0 [ hatch 3[rt random-float 360 ; assumption here is 1/10
         fd 1]]]
+     set age age + 1
   ]
-  set age age + 1
+
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
@@ -178,7 +187,7 @@ CHOOSER
 set-environment
 set-environment
 "low" "medium" "high" "dynamic"
-1
+2
 
 @#$#@#$#@
 ## WHAT IS IT?
