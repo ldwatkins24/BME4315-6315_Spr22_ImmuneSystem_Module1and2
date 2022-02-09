@@ -24,7 +24,7 @@ to setup ; setting up the environment
   setup-env
   ;setup-patches ; setup the environment
   setup-tumors ; tumor cells
-  setup-imm ; immune cells
+  ;setup-imm ; immune cells
   ask patches [set chemokine 0]
   reset-ticks
 end
@@ -45,12 +45,39 @@ to setup-env ; this is for initial setup of the envs
   (ifelse
     set-environment = "low" [ ; if the chosen environment is low
       ask patches [set pcolor red + 3]
+        create-immunes 1 [setxy -16 -16
+    ifelse(random 2 = 0)[set direction 1] [set direction -1]] ; place tumor cells in bottom L corner
+  ask immunes [
+    set color yellow ; make them blue and circular
+    set shape "square"
+    set flutter-amount 60
+    set size 2
+    set tumor-in-sight nobody
+  ]
     ]
     set-environment = "medium" [ ; if the chosen environment is medium
       ask patches [set pcolor red + 2]
+        create-immunes 10 [setxy -16 -16
+    ifelse(random 20 = 0)[set direction 1] [set direction -1]] ; place tumor cells in bottom L corner
+  ask immunes [
+    set color yellow ; make them blue and circular
+    set shape "square"
+    set flutter-amount 60
+    set size 2
+    set tumor-in-sight nobody
+  ]
     ]
     set-environment = "high" [ ; if the chosen environment is high
       ask patches [set pcolor red]
+        create-immunes 100 [setxy -16 -16
+    ifelse(random 2 = 0)[set direction 1] [set direction -1]] ; place tumor cells in bottom L corner
+  ask immunes [
+    set color yellow ; make them blue and circular
+    set shape "square"
+    set flutter-amount 60
+    set size 2
+    set tumor-in-sight nobody
+  ]
     ]
     ; else
     [
@@ -71,17 +98,19 @@ to setup-tumors
 end
 
 
-to setup-imm
-  create-immunes 5 [setxy -16 -16
-    ifelse(random 2 = 0)[set direction 1] [set direction -1]] ; place tumor cells in bottom L corner
-  ask immunes [
-    set color yellow ; make them blue and circular
-    set shape "square"
-    set flutter-amount 60
-    set size 2
-    set tumor-in-sight nobody
-  ]
-end
+;to setup-imm
+;  create-immunes 5 [setxy -16 -16
+;    ifelse(random 2 = 0)[set direction 1] [set direction -1]] ; place tumor cells in bottom L corner
+;  ask immunes [
+;    set color yellow ; make them blue and circular
+;    set shape "square"
+;    set flutter-amount 60
+;    set size 2
+;    set tumor-in-sight nobody
+;  ]
+;end
+
+
 
 to tumor-chemokine
   ask turtles with [color = blue]
@@ -139,7 +168,7 @@ to-report chemo-angle [angle]
 end
 
 to imm-kill
-  if time > 2000 [
+  if time > 1000 [
    ask immunes [
   ifelse tumor-in-sight = nobody [
       fd 1
@@ -164,13 +193,13 @@ end
 
 to proliferate-tumors
   (ifelse
-    set-environment = "low" [ ask tumors [
+    set-environment = "low" and count tumors < 3000 [ ask tumors [
       prol-tumor-low]
     ]
-    set-environment = "medium" [ask tumors [
+    set-environment = "medium" and count tumors < 3000 [ask tumors [
       prol-tumor-med]
     ]
-    set-environment = "high" [ask tumors [
+    set-environment = "high" and count tumors < 3000 [ask tumors [
       prol-tumor-high]
     ]
    )
@@ -291,20 +320,52 @@ set-environment
 "low" "medium" "high"
 0
 
-SLIDER
-15
-194
-187
-227
-specificity
-specificity
-0
-50
-50.0
+MONITOR
+45
+264
+111
+309
+#tumors
+count tumors
+17
 1
-1
-NIL
-HORIZONTAL
+11
+
+PLOT
+662
+23
+862
+173
+Tumor cell Population
+Time
+# Tumors
+0.0
+3000.0
+0.0
+5000.0
+true
+true
+"" ""
+PENS
+"tumors" 1.0 0 -13345367 true "" "plot count tumors"
+
+PLOT
+663
+188
+863
+338
+Immune cell contacts
+time
+#contacts
+0.0
+5000.0
+0.0
+5000.0
+true
+true
+"" ""
+PENS
+"# links" 1.0 0 -5825686 true "" "plot count links "
 
 @#$#@#$#@
 ## WHAT IS IT?
