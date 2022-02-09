@@ -30,12 +30,14 @@ to setup ; setting up the environment
 end
 
 to go
+  stop-program
   proliferate-tumors
   apoptose-tumors
   set time ticks
   imm-chemokine
   tumor-chemokine
   imm-kill
+
   tick
 end
 
@@ -70,7 +72,7 @@ end
 
 
 to setup-imm
-  create-immunes 3 [setxy -16 -16
+  create-immunes 5 [setxy -16 -16
     ifelse(random 2 = 0)[set direction 1] [set direction -1]] ; place tumor cells in bottom L corner
   ask immunes [
     set color yellow ; make them blue and circular
@@ -209,7 +211,13 @@ to prol-tumor-high
 end
 
 to apoptose-tumors ; bringing back apoptose to control for tumor desnity
+  if count tumors > 0 [
   ask one-of tumors [if sum [count tumors-here] of neighbors > 10 [die]]
+  ]
+end
+
+to stop-program
+  if count tumors = 0 [stop]
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
