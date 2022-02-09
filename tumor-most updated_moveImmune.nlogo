@@ -30,14 +30,14 @@ to setup ; setting up the environment
 end
 
 to go
+  set time ticks
   stop-program
   proliferate-tumors
   apoptose-tumors
-  set time ticks
   imm-chemokine
   tumor-chemokine
   imm-kill-env
-
+  if time > 1440 [stop]
   tick
 end
 
@@ -57,7 +57,7 @@ to setup-env ; this is for initial setup of the envs
     ]
     set-environment = "medium" [ ; if the chosen environment is medium
       ask patches [set pcolor red + 2]
-        create-immunes 10 [setxy -16 -16
+        create-immunes 20 [setxy -16 -16
     ifelse(random 20 = 0)[set direction 1] [set direction -1]] ; place tumor cells in bottom L corner
   ask immunes [
     set color yellow ; make them blue and circular
@@ -69,7 +69,7 @@ to setup-env ; this is for initial setup of the envs
     ]
     set-environment = "high" [ ; if the chosen environment is high
       ask patches [set pcolor red]
-        create-immunes 100 [setxy -16 -16
+        create-immunes 200 [setxy -16 -16
     ifelse(random 2 = 0)[set direction 1] [set direction -1]] ; place tumor cells in bottom L corner
   ask immunes [
     set color yellow ; make them blue and circular
@@ -169,9 +169,9 @@ end
 
 
 to imm-kill-env
-  if time > 1000 and set-environment = "high" [imm-kill]
-  if time > 1500 and set-environment = "medium" [imm-kill]
-  if time > 3000 and set-environment = "low" [imm-kill]
+  if time >  200 and set-environment = "high" [imm-kill]
+  if time >  240 and set-environment = "medium" [imm-kill]
+  if time >  340 and set-environment = "low" [imm-kill]
 end
 
 
@@ -220,7 +220,7 @@ to prol-tumor-low
   [set age 0
     if count tumors-here < m-neighbors ; watch where you proliferate
     [
-      if random 100 = 0 [
+      if random 35 = 0 [
         hatch 1[rt random-float 360 ;
         fd 1]]]
     set age age + 1
@@ -232,7 +232,7 @@ to prol-tumor-med
    ifelse age > 12 [die]
   [set age 0
     if count tumors-here < m-neighbors[
-    if random 100 = 0 [ hatch 2[rt random-float 360 ; same probability but hatch twice
+    if random 35 = 0 [ hatch 2[rt random-float 360 ; same probability but hatch twice
         fd 1]]]
      set age age + 1
   ]
@@ -242,7 +242,7 @@ to prol-tumor-high
   ifelse age > 12 [die]
   [set age 0
     if count tumors-here < m-neighbors[
-    if random 100 = 0 [ hatch 4[rt random-float 360 ; same probability but hatch 4 times
+    if random 35 = 0 [ hatch 4[rt random-float 360 ; same probability but hatch 4 times
         fd 1]]]
     set age age + 1
   ]
@@ -255,7 +255,7 @@ to apoptose-tumors ; bringing back apoptose to control for tumor desnity
 end
 
 to stop-program
-  if count tumors = 0 [stop]
+  if (count tumors = 0) or (time = 1080) [stop]
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
@@ -329,17 +329,6 @@ set-environment
 "low" "medium" "high"
 2
 
-MONITOR
-45
-264
-111
-309
-#tumors
-count tumors
-17
-1
-11
-
 PLOT
 662
 23
@@ -357,24 +346,6 @@ true
 "" ""
 PENS
 "tumors" 1.0 0 -13345367 true "" "plot count tumors"
-
-PLOT
-663
-188
-863
-338
-Immune cell contacts
-time
-#contacts
-0.0
-5000.0
-0.0
-5000.0
-true
-true
-"" ""
-PENS
-"# links" 1.0 0 -5825686 true "" "plot count links "
 
 MONITOR
 41
