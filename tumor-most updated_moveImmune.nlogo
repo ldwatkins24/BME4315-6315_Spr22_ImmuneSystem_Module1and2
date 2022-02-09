@@ -36,7 +36,7 @@ to go
   set time ticks
   imm-chemokine
   tumor-chemokine
-  imm-kill
+  imm-kill-env
 
   tick
 end
@@ -45,13 +45,13 @@ to setup-env ; this is for initial setup of the envs
   (ifelse
     set-environment = "low" [ ; if the chosen environment is low
       ask patches [set pcolor red + 3]
-        create-immunes 1 [setxy -16 -16
+        create-immunes 2 [setxy -16 -16
     ifelse(random 2 = 0)[set direction 1] [set direction -1]] ; place tumor cells in bottom L corner
   ask immunes [
     set color yellow ; make them blue and circular
     set shape "square"
     set flutter-amount 60
-    set size 2
+    set size 0.5
     set tumor-in-sight nobody
   ]
     ]
@@ -63,7 +63,7 @@ to setup-env ; this is for initial setup of the envs
     set color yellow ; make them blue and circular
     set shape "square"
     set flutter-amount 60
-    set size 2
+    set size 0.5
     set tumor-in-sight nobody
   ]
     ]
@@ -75,7 +75,7 @@ to setup-env ; this is for initial setup of the envs
     set color yellow ; make them blue and circular
     set shape "square"
     set flutter-amount 60
-    set size 2
+    set size 0.5
     set tumor-in-sight nobody
   ]
     ]
@@ -91,7 +91,7 @@ to setup-tumors
   ask tumors [
     set color blue ; make them blue and circular
     set shape "circle"
-    set size 0.7
+    set size 1
     set age 0
     ;set gens 0 ; generation set at 0
   ]
@@ -167,8 +167,15 @@ to-report chemo-angle [angle]
   report [chemokine] of p
 end
 
+
+to imm-kill-env
+  if time > 1000 and set-environment = "high" [imm-kill]
+  if time > 1500 and set-environment = "medium" [imm-kill]
+  if time > 3000 and set-environment = "low" [imm-kill]
+end
+
+
 to imm-kill
-  if time > 1000 [
    ask immunes [
   ifelse tumor-in-sight = nobody [
       fd 1
@@ -188,8 +195,10 @@ to imm-kill
     ]
     ]
   ]
-  ]
+
 end
+
+
 
 to proliferate-tumors
   (ifelse
@@ -318,7 +327,7 @@ CHOOSER
 set-environment
 set-environment
 "low" "medium" "high"
-0
+2
 
 MONITOR
 45
@@ -366,6 +375,17 @@ true
 "" ""
 PENS
 "# links" 1.0 0 -5825686 true "" "plot count links "
+
+MONITOR
+41
+334
+98
+379
+#links
+count links
+17
+1
+11
 
 @#$#@#$#@
 ## WHAT IS IT?
